@@ -1,0 +1,84 @@
+1) GITHUB: create a github repo and clone it to your computer and open project folder on CMD
+
+2)
+npm init -y
+npm install express dotenv mongoose mongodb
+
+3) open package.json and update these parts below like this:
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "client": "cd client && npm start",
+    "install-client": "cd client && npm install",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=14.20.1"
+  }
+
+specifiying "engines" will prevent errors when you deploy your app to production platforms such as Render.
+
+4) Create a .gitignore file and add these:
+node_modules
+"node_modules"
+.env
+
+5) create server.js file:
+
+const express = require('express');
+const path = require('path');
+
+const connectDB = require("./Database");
+connectDB();
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+const server = app.listen(process.env.PORT || 5000);
+const portNumber = server.address().port;
+console.log(`Server is running on port ${portNumber}`);
+
+6) Create Database.js and put inside:
+//Database.js
+require("dotenv").config();
+const mongoose = require("mongoose");
+const uri = process.env.SERVER_MONGODB_URI;
+const connectDB = async () => {
+    try {
+       await mongoose.connect(uri);
+       console.log("Успех, подключение к MongoDB / Success, connected to MongoDB") 
+    } catch (error) {
+        console.log("Ошибка подключения:", error.message);
+    }
+}
+module.exports = connectDB;
+
+7) MONGODB WEBSITE:
+Go to your profile page 
+Click on "+New Project"
+Name your project
+No need to add any members
+Click on "Create Deployment"
+Choose free option
+Choose a region close to you and click on "create"
+For connection authentication:
+-Click on "Username and Passwor"
+-Enter a username and password
+-Choose "Cloud Environment"
+-Configure "IP Access List"
+-Enter this for IP Address: "0.0.0.0/0" and anything in "description" field
+-Click on "Finish and Close"
+Then on cluster page, click on "Connect"
+Click on "Drivers"
+Copy your raw connection string and paste it to dotenv file like below (for example my password is: "XXaaBB1212"):
+-mongodb+srv://leonidas:<password>@cluster0.fdkdzmd.mongodb.net/?retryWrites=true&w=majority (RAW STRING)
+-mongodb+srv://leonidas:XXaaBB1212@cluster0.fdkdzmd.mongodb.net/?retryWrites=true&w=majority (STRING WITH PASSWORD)
+
+8) ROOT: Create .env file and put inside:
+SERVER_MONGODB_URI = "mongodb+srv://leonidas:XXaaBB1212@cluster0.fdkdzmd.mongodb.net/?retryWrites=true&w=majority"
+
+9) Later when you upload your project to Render.com, dont forget to add this below as an environment variable
+SERVER_MONGODB_URI = "mongodb+srv://leonidas:XXaaBB1212@cluster0.fdkdzmd.mongodb.net/?retryWrites=true&w=majority"
